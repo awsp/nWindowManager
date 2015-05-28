@@ -9,7 +9,7 @@ There is no need to manually keep track of which window has already opened nor w
 
 
 #### Installation
-Currently only manually installation is availabile sa I haven't publish it to NPM registry. 
+Currently only manually installation is available as I haven't officially published it
 - Manual Installation
     - Clone this repo
     - Put it into your app directory
