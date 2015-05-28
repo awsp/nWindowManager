@@ -15,7 +15,9 @@ Currently only manually installation is available as I haven't officially publis
     - Put it into your app directory
     - Use `npm link` to create a symlink
 
-#### Usage
+#### Example
+
+##### Simple usage: 
 ```js
 var gui = require("nw.gui");
 var masterWindow = gui.Window.get();
@@ -48,16 +50,47 @@ onload = function () {
     this.close(true);
   });
 };
-
-
-// To open a new window
-global.nWindowManager.open("foo");
-
-// To call a function defined in a page of a new window
-global.nWindowManager.get("foo").window.myFunction();
-
-
 ```
+
+
+##### To open a new window:
+```js
+global.nWindowManager.open("foo");
+```
+
+##### To call a function defined in a page of a new window
+```js
+global.nWindowManager.get("foo").window.myFunction();
+```
+
+##### Re-opening windows with saved session, (Using arvindr21's [diskDB](https://github.com/arvindr21/diskDB) for example. )
+```js
+// Save sessions
+var db = require('diskdb');
+db = db.connect('db/', ['nwindows']);
+
+var openedWindows = global.nWindowManager.openedWindows();
+db.nwindows.save(openedWindows.data());
+global.nWindowManager.closeAll();
+
+
+// Re-open
+if (db.nwindows.count() > 0) {
+  var openedWindows = db.nwindows.find();
+  for (var i in openedWindows) {
+    var uid = openedWindows[i].uid;
+    var position = openedWindows[i].position;
+    var size = openedWindows[i].size;
+    var nWindow = global.nWindowManager.open(uid);
+    if (nWindow) {
+      nWindow.instance.moveTo(position.x, position.y);
+      nWindow.instance.resizeTo(size.width, size.height);
+    }
+  }
+  db.nwindows.remove();
+}
+```
+
 
 
 #### Notes

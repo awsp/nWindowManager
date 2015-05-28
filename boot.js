@@ -56,6 +56,51 @@ NWindow = (function () {
   return NWindow;
 })();
 
+
+/**
+ * NWindowList Class
+ */
+var NWindowList = (function () {
+
+  function NWindowList() {
+    this.nWindowList = [];
+  }
+
+  NWindowList.prototype.add = function (uid, nWindow) {
+    this.nWindowList.push({
+      uid: uid,
+      nWindow: nWindow
+    });
+  };
+
+  NWindowList.prototype.get = function () {
+    return this.nWindowList;
+  };
+
+  NWindowList.prototype.data = function () {
+    var data = [];
+    for (var i in this.nWindowList) {
+      var win = this.nWindowList[i];
+      data.push({
+        uid: win.uid,
+        position: {
+          x: win.nWindow.instance.x,
+          y: win.nWindow.instance.y
+        },
+        size: {
+          width: win.nWindow.instance.width,
+          height: win.nWindow.instance.height
+        }
+      });
+    }
+
+    return data;
+  };
+
+  return NWindowList;
+})();
+
+
 /**
  * NWindowManager Class
  */
@@ -89,12 +134,13 @@ NWindowManager = (function () {
   /**
    * Spawn and focus to a new nWindow
    * @param uid
+   * @returns {null|NWindow}
    */
   NWindowManager.prototype.open = function (uid) {
     var nWindow = this.find(uid);
 
     if (nWindow) {
-      if (!nWindow.hasSpawned()) {
+      if (! nWindow.hasSpawned()) {
         var instance = nWindow.spawn();
         instance.on("loaded", function () {
           this.focus();
@@ -104,6 +150,7 @@ NWindowManager = (function () {
           });
         });
       }
+      return nWindow;
     }
     else {
       // Not in list
@@ -136,7 +183,11 @@ NWindowManager = (function () {
    * @returns {*}
    */
   NWindowManager.prototype.get = function (uid) {
-    return this.find(uid);
+    var nWindow = this.find(uid);
+    if (nWindow) {
+      return nWindow.instance;
+    }
+    return null;
   };
 
   /**
@@ -145,7 +196,7 @@ NWindowManager = (function () {
    */
   NWindowManager.prototype.close = function (uid) {
     var nWindow = this.find(uid);
-    if (nWindow) {
+    if (nWindow && nWindow.hasSpawned()) {
       nWindow.instance.close();
     }
   };
@@ -155,9 +206,27 @@ NWindowManager = (function () {
    */
   NWindowManager.prototype.closeAll = function () {
     for (var uid in this.nWindowList) {
-      var win = this.find(uid);
-      win.instance.close(true);
+      var nWindow = this.find(uid);
+      if (nWindow.hasSpawned()) {
+        nWindow.instance.close(true);
+      }
     }
+  };
+
+  /**
+   * Obtain current position, size and uid of opened windows.
+   * Allow for saved session when re-opening windows.
+   * @returns {NWindowList}
+   */
+  NWindowManager.prototype.openedWindows = function () {
+    var openedWindows = new NWindowList();
+    for (var uid in this.nWindowList) {
+      var nWindow = this.find(uid);
+      if (nWindow.hasSpawned()) {
+        openedWindows.add(uid, nWindow);
+      }
+    }
+    return openedWindows;
   };
 
   return NWindowManager;
