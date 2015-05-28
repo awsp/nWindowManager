@@ -1,0 +1,19 @@
+{
+  "name": "nWindowManager",
+  "version": "0.1.0",
+  "description": "--------------- @version Alpha-0.1.0",
+  "main": "boot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/awsp/nWindowManager.git"
+  },
+  "author": "Anthony S. Wu <anthonyspwu@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/awsp/nWindowManager/issues"
+  },
+  "homepage": "https://github.com/awsp/nWindowManager"
+}
