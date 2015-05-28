@@ -164,4 +164,3 @@ NWindowManager = (function () {
 })();
 
 exports.NWindowManager = NWindowManager;
-exports.NWindow = NWindow;
